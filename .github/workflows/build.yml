@@ -1,7 +1,7 @@
 name: Build Fedora-Distrobox
 on:
   schedule:
-    - cron: '20 18 * * *'  # 8:20pm everyday
+    - cron: '0 3 * * *'  # 8:20pm everyday
   pull_request:
     branches:
       - main
