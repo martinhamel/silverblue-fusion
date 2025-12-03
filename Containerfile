@@ -1,4 +1,4 @@
-FROM quay.io/fedora/fedora-silverblue:latest
+FROM quay.io/fedora/fedora-silverblue:latest AS silverblue-fusion
 
 # -------------------------------------------------------------------------
 # INSTALLATION DE RPM FUSION
