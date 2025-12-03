@@ -151,7 +151,7 @@ jobs:
         if: github.event_name != 'pull_request'
 
       - name: Sign container image
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && secrets.SIGNING_SECRET != ''
         run: |
           cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ env.IMAGE_NAME }}@${TAGS}
         env:
