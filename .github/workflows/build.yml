@@ -85,6 +85,18 @@ jobs:
           done
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
+      # Free up disk space before build
+      - name: Free up disk space on runner
+        run: |
+          echo "Initial free space:"
+          df -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          echo "Free space after cleanup:"
+          df -h
+
       # Build metadata
       - name: Image Metadata
         uses: docker/metadata-action@v5
@@ -160,25 +172,3 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           echo "${{ toJSON(steps.push.outputs) }}"
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      # --- AJOUTEZ CETTE ÉTAPE ---
-      - name: Free up disk space on runner
-        run: |
-          echo "Initial free space:"
-          df -h
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf "/usr/local/share/boost"
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-          echo "Free space after cleanup:"
-          df -h
-      # ---------------------------
-
-      - name: Build the container image
-        run: |
-          podman build -t my-image .
