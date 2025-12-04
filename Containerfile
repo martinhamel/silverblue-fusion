@@ -62,7 +62,7 @@ RUN mkdir -p "/var/opt/Mullvad VPN/resources/" && \
 # On utilise rpm-ostree, la méthode standard pour les systèmes immuables
 # comme Silverblue, pour installer les paquets.
 # -------------------------------------------------------------------------
-RUN dnf install -y \
+RUN rpm-ostree install \
     fish \
     code \
     mullvad-vpn \
