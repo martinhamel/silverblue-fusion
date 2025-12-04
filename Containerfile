@@ -40,7 +40,9 @@ RUN dnf groupinstall -y "Fedora Workstation" --exclude=rootfiles && \
 
 # -------------------------------------------------------------------------
 # CONFIGURATION FINALE DES SERVICES
+# On force la création des liens systemd manuellement car 'systemctl'
+# n'est pas fiable dans l'environnement de construction.
 # -------------------------------------------------------------------------
-RUN systemctl set-default graphical.target && \
-    systemctl enable gdm.service && \
+RUN ln -sf /usr/lib/systemd/system/graphical.target /etc/systemd/system/default.target && \
+    ln -sf /usr/lib/systemd/system/gdm.service /etc/systemd/system/display-manager.service && \
     systemctl enable mullvad-daemon.service
