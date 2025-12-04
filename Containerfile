@@ -1,10 +1,4 @@
-FROM quay.io/fedora-ostree-desktops/silverblue:43 AS fedora-workstation-fusion
-
-# -------------------------------------------------------------------------
-# INSTALLATION DE RPM FUSION ET AUTRES DÉPÔTS
-# (Cette partie ne change pas)
-# -------------------------------------------------------------------------
-RUN dnf -y install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+FROM ghcr.io/ublue-os/silverblue-main:latest AS fedora-workstation-fusion
 
 RUN set -eux; \
     rpm --import https://packages.microsoft.com/keys/microsoft.asc; \
@@ -27,14 +21,5 @@ RUN dnf install -y \
     fish \
     code \
     mullvad-vpn \
-    podman-compose \
-    ffmpegthumbnailer 
+    podman-compose 
 
-RUN dnf remove firefox -y
-
-RUN dnf swap -y ffmpeg-free ffmpeg --allowerasing && \
-    dnf group install -y multimedia && \
-    dnf swap -y mesa-va-drivers mesa-va-drivers-freeworld && \
-    dnf swap -y mesa-vdpau-drivers mesa-vdpau-drivers-freeworld 
-
-RUN dnf clean all
