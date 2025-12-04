@@ -14,13 +14,6 @@ RUN set -eux; \
     rpm --import /etc/pki/rpm-gpg/mullvad-keyring.asc
 
 # -------------------------------------------------------------------------
-# INSTALLATION DE L'ENVIRONNEMENT DE BUREAU
-# On installe le groupe Fedora Workstation en excluant le paquet 'rootfiles'
-# qui entre en conflit avec les fichiers de l'image de base.
-# -------------------------------------------------------------------------
-RUN dnf groupinstall -y "Fedora Workstation" --exclude=rootfiles
-
-# -------------------------------------------------------------------------
 # PRÉPARATION POUR MULLVAD VPN (ne change pas)
 # -------------------------------------------------------------------------
 RUN mkdir -p "/var/opt/Mullvad VPN/resources/" && \
