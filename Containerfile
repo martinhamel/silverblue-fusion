@@ -28,30 +28,25 @@ RUN mkdir -p "/var/opt/Mullvad VPN/resources/" && \
     mkdir -p /var/log/mullvad-vpn/
 
 # -------------------------------------------------------------------------
-# INSTALLATION DES PAQUETS
-# On utilise dnf, la méthode standard pour les images de conteneurs.
+# INSTALLATION ET CONFIGURATION EN UNE SEULE ÉTAPE
+# On regroupe toutes les opérations DNF pour optimiser la taille des couches
+# et l'utilisation de l'espace disque sur le runner GitHub.
 # -------------------------------------------------------------------------
-RUN dnf install -y \
+RUN dnf groupinstall -y "Fedora Workstation" --exclude=rootfiles && \
+    dnf install -y \
     fish \
     code \
     mullvad-vpn \
     podman-compose \
-    ffmpegthumbnailer
+    ffmpegthumbnailer && \
+    dnf swap -y ffmpeg-free ffmpeg --allowerasing && \
+    dnf group install -y multimedia && \
+    dnf swap -y mesa-va-drivers mesa-va-drivers-freeworld && \
+    dnf swap -y mesa-vdpau-drivers mesa-vdpau-drivers-freeworld && \
+    dnf clean all
 
 # -------------------------------------------------------------------------
-# INSTALLATION DE FFMPEG ET DES PAQUETS MULTIMÉDIA
-# (Ces commandes ne changent pas, mais doivent être après l'installation des dépôts)
-# -------------------------------------------------------------------------
-RUN dnf -y swap ffmpeg-free ffmpeg --allowerasing
-RUN dnf group install multimedia -y
-RUN dnf -y swap mesa-va-drivers mesa-va-drivers-freeworld
-RUN dnf -y swap mesa-vdpau-drivers mesa-vdpau-drivers-freeworld
-
-# -------------------------------------------------------------------------
-# CONFIGURATION FINALE
-# On s'assure que le système démarre en mode graphique, on active le service
-# Mullvad et on nettoie les caches pour réduire la taille de l'image.
+# CONFIGURATION FINALE DES SERVICES
 # -------------------------------------------------------------------------
 RUN systemctl set-default graphical.target && \
-    systemctl enable mullvad-daemon.service && \
-    dnf clean all
+    systemctl enable mullvad-daemon.service
