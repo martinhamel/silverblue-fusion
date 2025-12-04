@@ -42,5 +42,5 @@ RUN dnf groupinstall -y "Fedora Workstation" --exclude=rootfiles && \
 # CONFIGURATION FINALE DES SERVICES
 # -------------------------------------------------------------------------
 RUN systemctl set-default graphical.target && \
-    systemctl enable mullvad-daemon.service && \
-    systemctl enable gdm.service
+    systemctl enable gdm.service && \
+    systemctl enable mullvad-daemon.service
