@@ -1,4 +1,4 @@
-FROM quay.io/fedora/fedora-bootc:40 AS silverblue-fusion
+FROM quay.io/fedora-ostree-desktops/silverblue:43 AS fedora-workstation-fusion
 
 # -------------------------------------------------------------------------
 # INSTALLATION DE RPM FUSION ET AUTRES DÉPÔTS
@@ -21,29 +21,20 @@ RUN mkdir -p "/var/opt/Mullvad VPN/resources/" && \
     mkdir -p /var/log/mullvad-vpn/
 
 # -------------------------------------------------------------------------
-# INSTALLATION ET CONFIGURATION EN UNE SEULE ÉTAPE
-# On regroupe toutes les opérations DNF pour optimiser la taille des couches
-# et l'utilisation de l'espace disque sur le runner GitHub.
+# INSTALLATION ET CONFIGURATION DES LOGICIELS SUPPLÉMENTAIRES
 # -------------------------------------------------------------------------
-RUN dnf groupinstall -y "Fedora Workstation" --exclude=rootfiles && \
-    dnf install -y \
+RUN dnf install -y \
     fish \
     code \
     mullvad-vpn \
     podman-compose \
-    ffmpegthumbnailer && \
-    dnf swap -y ffmpeg-free ffmpeg --allowerasing && \
+    ffmpegthumbnailer 
+
+RUN dnf remove firefox -y
+
+RUN dnf swap -y ffmpeg-free ffmpeg --allowerasing && \
     dnf group install -y multimedia && \
     dnf swap -y mesa-va-drivers mesa-va-drivers-freeworld && \
-    dnf swap -y mesa-vdpau-drivers mesa-vdpau-drivers-freeworld && \
-    dnf clean all
+    dnf swap -y mesa-vdpau-drivers mesa-vdpau-drivers-freeworld 
 
-# -------------------------------------------------------------------------
-# CONFIGURATION FINALE DES SERVICES
-# On démasque GDM, puis on force la création des liens systemd manuellement
-# car 'systemctl' n'est pas fiable dans l'environnement de construction.
-# -------------------------------------------------------------------------
-RUN systemctl unmask gdm.service && \
-    ln -sf /usr/lib/systemd/system/graphical.target /etc/systemd/system/default.target && \
-    ln -sf /usr/lib/systemd/system/gdm.service /etc/systemd/system/display-manager.service && \
-    systemctl enable mullvad-daemon.service
+RUN dnf clean all
