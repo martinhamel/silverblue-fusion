@@ -15,10 +15,10 @@ RUN set -eux; \
 
 # -------------------------------------------------------------------------
 # INSTALLATION DE L'ENVIRONNEMENT DE BUREAU
-# C'est l'étape cruciale qui manquait.
-# On installe le groupe de paquets qui correspond à Fedora Workstation.
+# On installe le groupe Fedora Workstation en excluant le paquet 'rootfiles'
+# qui entre en conflit avec les fichiers de l'image de base.
 # -------------------------------------------------------------------------
-RUN dnf groupinstall -y "Fedora Workstation"
+RUN dnf groupinstall -y "Fedora Workstation" --exclude=rootfiles
 
 # -------------------------------------------------------------------------
 # PRÉPARATION POUR MULLVAD VPN (ne change pas)
@@ -28,8 +28,8 @@ RUN mkdir -p "/var/opt/Mullvad VPN/resources/" && \
     mkdir -p /var/log/mullvad-vpn/
 
 # -------------------------------------------------------------------------
-# INSTALLATION DES PAQUETS SUPPLÉMENTAIRES
-# On utilise maintenant dnf pour tous les paquets.
+# INSTALLATION DES PAQUETS
+# On utilise dnf, la méthode standard pour les images de conteneurs.
 # -------------------------------------------------------------------------
 RUN dnf install -y \
     fish \
@@ -48,10 +48,9 @@ RUN dnf -y swap mesa-va-drivers mesa-va-drivers-freeworld
 RUN dnf -y swap mesa-vdpau-drivers mesa-vdpau-drivers-freeworld
 
 # -------------------------------------------------------------------------
-# CONFIGURATION DU SYSTÈME
-# 1. On s'assure que le système démarre en mode graphique par défaut.
-# 2. On active le service Mullvad.
-# 3. On nettoie les caches pour réduire la taille de l'image.
+# CONFIGURATION FINALE
+# On s'assure que le système démarre en mode graphique, on active le service
+# Mullvad et on nettoie les caches pour réduire la taille de l'image.
 # -------------------------------------------------------------------------
 RUN systemctl set-default graphical.target && \
     systemctl enable mullvad-daemon.service && \
