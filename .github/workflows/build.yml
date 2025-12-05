@@ -1,7 +1,5 @@
 name: Build fedora-workstation-fusion
 on:
-  schedule:
-    - cron: '0 3 * * *'  
   pull_request:
     branches:
       - main
